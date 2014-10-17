@@ -53,7 +53,7 @@ add_action( 'init', 'jkl_accomplishments_taxonomies' );
 add_action( 'add_meta_boxes', 'jkl_accomplishments_meta_box' );
 
 // ##4 : Save metabox data
-add_action( 'save_post', 'jkl_save_accomplishments_meta_box' );
+add_action( 'save_post', 'jkl_save_meta_box' );
 
 // ##4 Accomplishments index page
 
@@ -253,12 +253,14 @@ function jkl_accomplishments_meta_box() {
  */
 
 function jkl_display_accomplishments_meta_box ( $post ) {
-    
     /*
      * Metabox fields                                           Validated (on save)     Escaped (output)    Method
      * 1. Link to Accomplishment    => jklac_link                                       back / front        esc_url
      * 2. Major Checkbox            => jklac_major              unnecessary due to WordPress' checked() function
      */
+    
+    // Add an nonce field so we can check for it later.
+    wp_nonce_field( basename(__FILE__), 'jklac_meta_box_nonce' );
     
     /*
      * Use get_post_meta() to retrieve an existing value 
@@ -266,24 +268,24 @@ function jkl_display_accomplishments_meta_box ( $post ) {
      */
     
     // $jklac_meta = get_post_meta( $post->ID );
-    $link = get_post_meta( $post->ID, 'jklac_link', true );
-    //$major = checked( get_post_meta( $post->ID, 'jklac_major', true), 1 );
+    $jklac_meta = get_post_meta( $post->ID );
     
-    print_r($link);
+    print_r($jklac_meta);
     
-    //$link = isset( $jklac_meta['jklac_link'] ) ? esc_url( $jklac_meta['jklac_link'][0] ) : '' ;
-    //$major = isset( $jklac_meta['jklac_major'] ) ? 1 : 0;
+    $link = isset( $jklac_meta['jklac_link'] ) ? esc_attr( $jklac_meta['jklac_link'][0] ) : '' ;
+    $check = isset( $jklac_meta['jklac_major'] ) ? esc_attr( $jklac_meta['jklac_major'][0] ) : '';
     
     // Show the URL box for the Link to the Accomplishment
-    echo "<input type='url' id='jklac_link' name='jklac_link' class='widefat' value='" . esc_url($link) . "' /><br /><br />";
+    echo "<input type='url' id='jklac_link' name='jklac_link' class='widefat' value='" . esc_url( $link ) . "' /><br /><br />";
     
     // BELOW: Show the Checkbox to decide whether or not to add this to the main timeline
-    echo "<input type='checkbox' id='jklac_major' name='jklac_major' value='1'" . checked( get_post_meta( $post->ID, 'jklac_major', true), 1 ) . " />";
-    echo "<label for='jklac_stored_meta[jklac_major]' class='note'>"
-                . _e( 'Do you want this Accomplishment to appear in your Primary Timeline? '
-                . '(i.e. is this a <a href="http://www.access.gpo.gov/nara/cfr/waisidx_03/16cfr255_03.html">Major Accomplishment</a>?)', 'jkl-reviews/languages')
-                . "</label>";
+    ?>
+    <input type='checkbox' id='jklac_major' name='jklac_major' value='1' <?php checked( $check, 1 ); ?> />
+    <label for='jklac_major'>
+        <?php _e( 'Do you want this Accomplishment to appear in your Primary Timeline? (i.e. is this a <a href="http://www.access.gpo.gov/nara/cfr/waisidx_03/16cfr255_03.html">Major Accomplishment</a>?)', 'jkl-reviews/languages'); ?>
+    </label>
        
+    <?php
 }
 
 
@@ -293,7 +295,7 @@ function jkl_display_accomplishments_meta_box ( $post ) {
  * 
  * @param int $post_id for the ID of the post being saved
  */
-function jkl_save_accomplishments_meta_box( $post_id ) {
+function jkl_save_meta_box( $post_id ) {
     
     /*
      * Ref @link http://codex.wordpress.org/Function_Reference/add_meta_box
@@ -301,21 +303,16 @@ function jkl_save_accomplishments_meta_box( $post_id ) {
      */
     
     // Check if nonce is set
-    if ( !isset( $_POST['jklac_nonce'] ) ) { return; }
+    if ( !isset( $_POST['jklac_meta_box_nonce'] ) ) { return; }
     
     // Verify the nonce is valid
-    if ( !wp_verify_nonce( $_POST['jklac_nonce'], basename(__FILE__) ) ) { return; }
+    if ( !wp_verify_nonce( $_POST['jklac_meta_box_nonce'], basename(__FILE__) ) ) { return; }
     
     // Check for autosave (don't save metabox on autosave)
     if ( defined ('DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) { return; }
     
     // Check the user's permissions.
-    if ( isset( $_POST['post_type'] ) && 'accomplishments' == $_POST['post_type'] ) {
-        if ( ! current_user_can( 'edit_page', $post_id ) ) { return; }
-    } else {
-        if ( ! current_user_can( 'edit_post', $post_id ) ) { return; }
-    }
-    
+    if ( ! current_user_can( 'edit_page', $post_id ) ) { return; }
     /*
      * After all those checks, save. TODO: Sanitize
      */
@@ -326,7 +323,9 @@ function jkl_save_accomplishments_meta_box( $post_id ) {
     }
     
     // Save the Major Accomplishment Checkbox
-    if( isset($_POST[ 'jklac_major' ] ) ) {
-        update_post_meta( $post_id, 'jklac_major', $_POST['jklac_major'] ); // Unnecessary sanitization/validation?
+    if( isset( $_POST['jklac_major'] ) ) {
+        update_post_meta( $post_id, 'jklac_major', $_POST['jklac_major'] );
+    } else {
+        delete_post_meta( $post_id, 'jklac_major' );
     }
 }
