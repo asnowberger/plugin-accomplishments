@@ -55,7 +55,26 @@ add_action( 'add_meta_boxes', 'jkl_accomplishments_meta_box' );
 // ##4 : Save metabox data
 add_action( 'save_post', 'jkl_save_meta_box' );
 
-// ##4 Accomplishments index page
+/*
+ * From here, things will get tricky. There is currently no good way to create custom index pages for Custom Post Types:
+ * @link https://tommcfarlin.com/page-template-in-plugin/
+ * 
+ * Because Custom Page Templates generally reside in Themes
+ * @link http://codex.wordpress.org/Theme_Development#Custom_Page_Templates
+ * 
+ * Here's a plugin that might be useful:
+ * @link https://wordpress.org/plugins/custom-post-type-page-template/
+ * 
+ * It's possible to try something using the single_template filter:
+ * @link http://wordpress.stackexchange.com/questions/17385/custom-post-type-templates-from-plugin-folder
+ * 
+ * Or, the best idea may be just to use the_content filter and change stuff in there:
+ * @link http://wordpress.stackexchange.com/questions/96660/custom-post-type-plugin-where-do-i-put-the-template
+ * 
+ * So, I'm considering creating a SHORTCODE that would be able to be placed in any Post or Page
+ * that would go through the LOOP and grab all the relevant data (title, permalink, meta data, thumbnail, excerpt, etc)
+ * and then output THAT in the Timeline style feature that I'm lookingn into.
+ */
 
 /*
  * ##### 1 #####
@@ -254,9 +273,9 @@ function jkl_accomplishments_meta_box() {
 
 function jkl_display_accomplishments_meta_box ( $post ) {
     /*
-     * Metabox fields                                           Validated (on save)     Escaped (output)    Method
-     * 1. Link to Accomplishment    => jklac_link                                       back / front        esc_url
-     * 2. Major Checkbox            => jklac_major              unnecessary due to WordPress' checked() function
+     * Metabox fields                                           Escaped (output)
+     * 1. Link to Accomplishment    => jklac_link               esc_url
+     * 2. Major Checkbox            => jklac_major              esc_attr
      */
     
     // Add an nonce field so we can check for it later.
@@ -270,16 +289,14 @@ function jkl_display_accomplishments_meta_box ( $post ) {
     // $jklac_meta = get_post_meta( $post->ID );
     $jklac_meta = get_post_meta( $post->ID );
     
-    print_r($jklac_meta);
-    
-    $link = isset( $jklac_meta['jklac_link'] ) ? esc_attr( $jklac_meta['jklac_link'][0] ) : '' ;
+    $link = isset( $jklac_meta['jklac_link'] ) ? esc_url( $jklac_meta['jklac_link'][0] ) : '' ;
     $check = isset( $jklac_meta['jklac_major'] ) ? esc_attr( $jklac_meta['jklac_major'][0] ) : '';
     
-    // Show the URL box for the Link to the Accomplishment
-    echo "<input type='url' id='jklac_link' name='jklac_link' class='widefat' value='" . esc_url( $link ) . "' /><br /><br />";
-    
-    // BELOW: Show the Checkbox to decide whether or not to add this to the main timeline
     ?>
+    <!-- Show the URL box for the Link to the Accomplishment -->
+    <input type='url' id='jklac_link' name='jklac_link' class='widefat' value='<?php echo $link; ?>' /><br /><br />
+
+    <!-- BELOW: Show the Checkbox to decide whether or not to add this to the main timeline -->
     <input type='checkbox' id='jklac_major' name='jklac_major' value='1' <?php checked( $check, 1 ); ?> />
     <label for='jklac_major'>
         <?php _e( 'Do you want this Accomplishment to appear in your Primary Timeline? (i.e. is this a <a href="http://www.access.gpo.gov/nara/cfr/waisidx_03/16cfr255_03.html">Major Accomplishment</a>?)', 'jkl-reviews/languages'); ?>
