@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Plugin Name: JKL Accomplishments
  * Plugin URI: http://www.jekkilekki.com
@@ -11,7 +10,7 @@
  * License: GPL2
  */
 
-/*  Copyright 2014  Aaron Snowberger  (email : jekkilekki@gmail.com)
+/*  Copyright 2014  Aaron Snowberger
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
@@ -43,15 +42,18 @@
 // ##B Create the plugin Deactivation function
 // ##C Create the plugin Uninstall function
 
-// ##1 Create the Custom Post Type AND flush rewrite rules to make permalinks work with new CPT slug
+// ##1 : Create the Custom Post Type AND flush rewrite rules to make permalinks work with new CPT slug
 add_action( 'init', 'jkl_accomplishments_posttype' );
 register_activation_hook( __FILE__, 'jkl_rewrite_flush' );
 
-// ##2 Create Custom Taxonomies
+// ##2 : Create Custom Taxonomies
 add_action( 'init', 'jkl_accomplishments_taxonomies' );
 
-// ##3 Create Custom Meta Box to catch the link and anything else we want
+// ##3 : Create Custom Meta Box to catch the link and anything else we want
 add_action( 'add_meta_boxes', 'jkl_accomplishments_meta_box' );
+
+// ##4 : Save metabox data
+add_action( 'save_post', 'jkl_save_accomplishments_meta_box' );
 
 // ##4 Accomplishments index page
 
@@ -233,7 +235,7 @@ function jkl_accomplishments_taxonomies() {
  */
 function jkl_accomplishments_meta_box() {
     add_meta_box( 
-        'link_to_accomplishment',                                               // Unique ID
+        'jklac_info',                                                           // Unique ID (for CSS)
         __('Link to Your Accomplishment', 'jkl-accomplishments/languages'),     // Title
         'jkl_display_accomplishments_meta_box',                                 // Callback function
         'accomplishments',                                                      // Post type to display on
@@ -253,46 +255,78 @@ function jkl_accomplishments_meta_box() {
 function jkl_display_accomplishments_meta_box ( $post ) {
     
     /*
-     * Documentation on nonces: 
-     * @link http://markjaquith.wordpress.com/2006/06/02/wordpress-203-nonces/
-     * @link http://www.prelovac.com/vladimir/improving-security-in-wordpress-plugins-using-nonces
+     * Metabox fields                                           Validated (on save)     Escaped (output)    Method
+     * 1. Link to Accomplishment    => jklac_link                                       back / front        esc_url
+     * 2. Major Checkbox            => jklac_major              unnecessary due to WordPress' checked() function
      */
-    wp_nonce_field( basename(__FILE__), 'jklac_nonce' ); // Add two hidden fields to protect against cross-site scripting.
-    
-    // Retrieve the current data based on Post ID
-    $jklac_stored_meta = get_post_meta( $post->ID );
-    // $jklrv_stored_options = get_option( 'jklrv_plugin_options' ); // Get options set on WP Options page
     
     /*
-     * Metabox fields                                           Validated (on save)     Escaped (output)    Method
-     * 0. Review Type (radio)       => jkl_radio                                        unnecessary?        (esc_attr breaks the code)
-     * 1. Cover Image               => jkl_review_cover                                 back / front        esc_url
-     * 2. Title                     => jkl_review_title         sanitize_text_field()   back / front        esc_attr
-     * 3. Author                    => jkl_review_author        sanitize_text_field()   back / front        esc_attr
-     * 4. Series                    => jkl_review_series        sanitize_text_field()   back / front        esc_attr
-     * 5. Category                  => jkl_review_category      sanitize_text_field()   back / front        esc_attr
-     * 6. Rating                    => jkl_review_rating        (float)                 unnecessary?        (use (float) to set as float, or floatval( $val ) to check it's a float
-     * 7. Summary                   => jkl_review_summary_area                          back / front        wp_kses_post
-     * 8. Affiliate Link            => jkl_review_affiliate_uri                         back / front        esc_url
-     * 9. Product Link              => jkl_review_product_uri                           back / front        esc_url
-     * 10. Author Link              => jkl_review_author_uri                            back / front        esc_url
-     * 11. Resources Link           => jkl_review_resources_uri                         back / front        esc_url
-     * 12. Disclosure Type (radio)  => jkl_disclose                                     unnecessary?
+     * Use get_post_meta() to retrieve an existing value 
+     * from the database and use the value for the form
      */
     
-    // Ref: TutsPlus Working with Meta Boxes Video Course
+    // $jklac_meta = get_post_meta( $post->ID );
+    $link = get_post_meta( $post->ID, 'jklac_link', true );
+    //$major = checked( get_post_meta( $post->ID, 'jklac_major', true), 1 );
     
-    // If we want to show the values we've stored, there are 2 ways to do that:
-    // 0. $jklrv_stored_meta = get_post_meta( $post->ID );
-    // 1. if ( isset ( $jklrv_stored_meta['identifier'] ) ) echo $jklrv_stored_meta['identifier'][0];
-    // 2. $html .= <input type="text" value="' . get_post_meta( $post->ID, 'identifier', true ) . '" />';
+    print_r($link);
     
-    // Test your saved values are stripped of tags by trying to save:
-    // <script>alert('Hello world!');</script>
+    //$link = isset( $jklac_meta['jklac_link'] ) ? esc_url( $jklac_meta['jklac_link'][0] ) : '' ;
+    //$major = isset( $jklac_meta['jklac_major'] ) ? 1 : 0;
     
+    // Show the URL box for the Link to the Accomplishment
+    echo "<input type='url' id='jklac_link' name='jklac_link' class='widefat' value='" . esc_url($link) . "' /><br /><br />";
     
-    $link = isset( $jklrv_stored_meta['jkl_review_product_uri'] ) ? esc_url( $jklrv_stored_meta['jkl_review_product_uri'][0] ) : '' ;
-    echo "<input type='url' id='jkl_review_product_uri' class='widefat' name='jkl_review_product_uri'
-                        value='$link' />";
+    // BELOW: Show the Checkbox to decide whether or not to add this to the main timeline
+    echo "<input type='checkbox' id='jklac_major' name='jklac_major' value='1'" . checked( get_post_meta( $post->ID, 'jklac_major', true), 1 ) . " />";
+    echo "<label for='jklac_stored_meta[jklac_major]' class='note'>"
+                . _e( 'Do you want this Accomplishment to appear in your Primary Timeline? '
+                . '(i.e. is this a <a href="http://www.access.gpo.gov/nara/cfr/waisidx_03/16cfr255_03.html">Major Accomplishment</a>?)', 'jkl-reviews/languages')
+                . "</label>";
+       
+}
+
+
+/*
+ * ##### 4 #####
+ * Fourth, Save the custom metadata
+ * 
+ * @param int $post_id for the ID of the post being saved
+ */
+function jkl_save_accomplishments_meta_box( $post_id ) {
     
+    /*
+     * Ref @link http://codex.wordpress.org/Function_Reference/add_meta_box
+     * Verify this came from our screen and with proper authorization and that we're ready to save.
+     */
+    
+    // Check if nonce is set
+    if ( !isset( $_POST['jklac_nonce'] ) ) { return; }
+    
+    // Verify the nonce is valid
+    if ( !wp_verify_nonce( $_POST['jklac_nonce'], basename(__FILE__) ) ) { return; }
+    
+    // Check for autosave (don't save metabox on autosave)
+    if ( defined ('DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) { return; }
+    
+    // Check the user's permissions.
+    if ( isset( $_POST['post_type'] ) && 'accomplishments' == $_POST['post_type'] ) {
+        if ( ! current_user_can( 'edit_page', $post_id ) ) { return; }
+    } else {
+        if ( ! current_user_can( 'edit_post', $post_id ) ) { return; }
+    }
+    
+    /*
+     * After all those checks, save. TODO: Sanitize
+     */
+    
+    // Save the Accomplishment Link URL
+    if( isset($_POST[ 'jklac_link' ] ) ) {
+        update_post_meta( $post_id, 'jklac_link', $_POST['jklac_link'] ); // Unnecessary sanitization/validation?
+    }
+    
+    // Save the Major Accomplishment Checkbox
+    if( isset($_POST[ 'jklac_major' ] ) ) {
+        update_post_meta( $post_id, 'jklac_major', $_POST['jklac_major'] ); // Unnecessary sanitization/validation?
+    }
 }
