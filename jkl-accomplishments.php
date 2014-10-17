@@ -76,6 +76,12 @@ add_action( 'save_post', 'jkl_save_meta_box' );
  * and then output THAT in the Timeline style feature that I'm lookingn into.
  */
 
+// ##5 : Create Shortcode to display the custom Timeline content for Accomplishments
+add_shortcode( 'accomplishments', 'jkl_accomplishments_shortcode' );
+
+// ##6 : Add a button to the WordPress Post editor panel so that users don't have to remember the shortcode
+add_action( 'admin_init', 'jkl_admin_init' ); // only do this in the admin panel
+
 /*
  * ##### 1 #####
  * Register an Accomplishments post type
@@ -345,4 +351,43 @@ function jkl_save_meta_box( $post_id ) {
     } else {
         delete_post_meta( $post_id, 'jklac_major' );
     }
+}
+
+
+/*
+ * ##### 5 #####
+ * Fifth, create a shortcode to display the Accomplishments post type in a Post or Page
+ * 
+ * @param 
+ */
+function jkl_accomplishments_shortcode() {
+    
+}
+
+
+/*
+ * ##### 6 #####
+ * Sixth, add a button to the WordPress Post editor panel so users don't have to remember the shortcode
+ * 
+ * @link http://solislab.com/blog/how-to-make-shortcodes-user-friendly/
+ */
+function jkl_admin_init() {
+    // Only hook up these filters if we're in the admin panel, and the current user
+    // has permission to edit Posts and Pages
+    if ( current_user_can( 'edit_posts' ) && current_user_can( 'edit_pages' ) ) {
+        add_filter( 'mce_buttons', 'jklac_mce_button' );
+        add_filter( 'mce_external_plugins', 'jklac_mce_plugin' );
+    }
+}
+
+function jklac_mce_button( $buttons ) {
+    // Add a separation before our button
+    array_push( $buttons, '|', 'accomplishments_button' );
+    return $buttons;
+}
+
+function jklac_mce_plugin( $plugins ) {
+    // This plugin file will work the magic of our button
+    $plugins['accomplishments'] = plugin_dir_url( __FILE__ ) . 'js/accomplishments_plugin.js';
+    return $plugins;
 }
