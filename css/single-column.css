@@ -1,0 +1,15 @@
+// Main styles
+* { // The following styles allow the elements to have percentage widths INCLUSIVE of their padding
+    position: relative;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+html, body, .wrap {
+    min-height: 100%;
+}
+
+img {
+    width: 100px;
+}

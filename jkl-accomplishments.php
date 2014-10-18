@@ -204,13 +204,13 @@ function jkl_accomplishments_taxonomies() {
     );
 
     $args = array(
-        'hierarchical'          => false,
-        'labels'                => $labels,
-        'show_ui'               => true,
-        'show_admin_column'     => true,
-        'update_count_callback' => '_update_post_term_count',
-        'query_var'             => true,
-        'rewrite'               => array( 'slug' => 'satisfaction' ),
+        'hierarchical'                  => false,
+        'labels'                        => $labels,
+        'show_ui'                       => true,
+        'show_admin_column'             => true,
+        'update_count_callback'         => '_update_post_term_count',
+        'query_var'                     => true,
+        'rewrite'                       => array( 'slug' => 'satisfaction' ),
     );
     
     register_taxonomy( 'satisfaction-level', array( 'accomplishments' ), $args );
@@ -239,13 +239,13 @@ function jkl_accomplishments_taxonomies() {
     );
 
     $args = array(
-        'hierarchical'          => false,
-        'labels'                => $labels,
-        'show_ui'               => true,
-        'show_admin_column'     => true,
-        'update_count_callback' => '_update_post_term_count',
-        'query_var'             => true,
-        'rewrite'               => array( 'slug' => 'difficulty' ),
+        'hierarchical'                  => false,
+        'labels'                        => $labels,
+        'show_ui'                       => true,
+        'show_admin_column'             => true,
+        'update_count_callback'         => '_update_post_term_count',
+        'query_var'                     => true,
+        'rewrite'                       => array( 'slug' => 'difficulty' ),
     );
     
     register_taxonomy( 'difficulty-level', array( 'accomplishments' ), $args );
@@ -358,10 +358,98 @@ function jkl_save_meta_box( $post_id ) {
  * ##### 5 #####
  * Fifth, create a shortcode to display the Accomplishments post type in a Post or Page
  * 
- * @param 
+ * @param
+ * 
+ * @link http://www.sitepoint.com/unleash-the-power-of-the-wordpress-shortcode-api/ 
  */
-function jkl_accomplishments_shortcode() {
+function jkl_accomplishments_shortcode( $atts, $content ) {
+    $atts = shortcode_atts( // override the $atts variable with these $atts
+        array(
+            'major'     => false,
+            'style'     => 'two-column',    // Default to a two-column Timeline layout
+            'content'   => !empty($content) ? $content : 'My List of Accomplishments this year (' . date('Y') . ')'
+        ), $atts // compare against the $atts that are passed in and overwrite whatever isn't specified
+    );
+
+    extract( $atts ); // goes into the array and makes all the values available as variables
     
+
+    /*
+     * Instantiate a new WP_Query Loop to get all the posts in this Accomplishments post type
+     * 
+     * @link http://codex.wordpress.org/Class_Reference/WP_Query
+     */
+    $args = array(
+        'post_type'         => 'accomplishments',
+        'posts_per_page'    => -1,
+        'year'              => date( 'Y' ),
+        //array( // MAYBE we can use this to determine the CSS stylesheet to pass in
+        //    'meta_key'      => 'style',
+        //   'meta_value'    => 'style',          // Here's where we can determine which style to give it
+        //)
+    );
+    
+    $query = new WP_Query( $args );
+    $html = ''; // Create the $html variable to store our HTML for output
+    
+    // If there are Accomplishments (and only if)...
+    if( $query->have_posts() ) :
+        // call the CSS stylesheet to handle the Timeline
+        if( $style == 'two-column' ) {
+            wp_register_style( 'jklac_two_column_style', plugin_dir_url( __FILE__ ) . '/css/two-column.css', false, '1.0.0' );
+            wp_enqueue_style( 'jklac_two_column_style' );
+        } else {
+            wp_register_style( 'jklac_single_column_style', plugin_dir_url( __FILE__ ) . '/css/single-column.css', false, '1.0.0' );
+            wp_enqueue_style( 'jklac_single_column_style' );
+        }
+        
+        // create the timeline content
+        $html .= "<h1>$content</h1>";
+        while ( $query->have_posts() ) : $query->the_post();
+    
+            // Start the Loop here
+            $html .= "<article class='timeline-item group'>";       // Add class 'first' to the first article
+            $html .= "<header class='timeline-info'>";
+            $html .= "<div class='date'>" . get_the_date() . "</div>";                    // Needs the publication date
+            $html .= "<div class='description'>" . get_the_excerpt() . "</div>";             // Needs the excerpt
+            $html .= "<div class='meta'>" . get_the_author() . "</div>";                    // Needs the custom taxonomies
+            $html .= "</header>"; 
+            if( has_post_thumbnail() ) {
+                $html .= "<figure class='timeline-image'>" . the_post_thumbnail() . "</figure>";    // Needs the thumbnail
+            }
+            $html .= "</article>";
+
+        endwhile;
+
+        wp_reset_postdata();
+        
+        // Add the 'Load More' link here (Turn this OFF if all posts are loaded already)
+        $html .= "<article class='timeline-item group loading-wrap'>";
+        $html .= "<header class='timeline-info'></header>";
+        $html .= "<figure class='timeline-image'>";
+        $html .= "<div class='loading'><i class='fa fa-spinner'></i> Loading</div>"; // Use a FontAwesome or Dashicon here rather than an image
+        $html .= "</figure>";
+        $html .= "</article>";
+    else :
+        $html .= __( "There are no Accomplishments to boast of yet. Why don't you <a href=''>add one?</a>" ); 
+    endif;
+    
+    
+    return $html;
+}
+
+function jklac_timeline_styles( $atts ) {
+    
+    // Determine whether this is a single-column or two-column Timeline and call the appropriate stylesheet
+    if ( $major == true ) {
+        wp_register_style( 'jkl_review_box_display_css', plugin_dir_url( __FILE__ ) . '/css/boxstyle.css', false, '1.0.0' );
+        wp_enqueue_style( 'jkl_review_box_display_css' );
+    } else {
+        
+    }
+    
+    // Also, add Font Awesome to our front-end styles
+    wp_enqueue_style( 'fontawesome', '//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css' );
 }
 
 
@@ -369,6 +457,7 @@ function jkl_accomplishments_shortcode() {
  * ##### 6 #####
  * Sixth, add a button to the WordPress Post editor panel so users don't have to remember the shortcode
  * 
+ * @link http://www.sitepoint.com/adding-a-media-button-to-the-content-editor/
  * @link http://solislab.com/blog/how-to-make-shortcodes-user-friendly/
  */
 function jkl_admin_init() {
