@@ -8,6 +8,21 @@ and open the template in the editor.
     Author     : jekkilekki
 */
 
+.timeline-wrap {
+    background-color: #efefef;
+    padding: 20px;
+}
+
+.timeline-title {
+    font-size: 2em;
+    border-bottom: 1px solid silver;
+}
+
+.timeline-item {
+    background-color: white;
+    padding: 20px;
+}
+
 img {
-    width: 10px;
+    /* width: 10px; */
 }

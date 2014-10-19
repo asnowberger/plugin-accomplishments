@@ -178,7 +178,7 @@ function jkl_accomplishments_taxonomies() {
         'rewrite'               => array( 'slug' => 'types' ),
     );
     
-    register_taxonomy( 'accomplishment-type', array( 'accomplishments' ), $args );
+    register_taxonomy( 'type', array( 'accomplishments' ), $args );
     
     
     /*
@@ -213,7 +213,7 @@ function jkl_accomplishments_taxonomies() {
         'rewrite'                       => array( 'slug' => 'satisfaction' ),
     );
     
-    register_taxonomy( 'satisfaction-level', array( 'accomplishments' ), $args );
+    register_taxonomy( 'satisfaction', array( 'accomplishments' ), $args );
     
     
     /*
@@ -248,7 +248,7 @@ function jkl_accomplishments_taxonomies() {
         'rewrite'                       => array( 'slug' => 'difficulty' ),
     );
     
-    register_taxonomy( 'difficulty-level', array( 'accomplishments' ), $args );
+    register_taxonomy( 'difficulty', array( 'accomplishments' ), $args );
 }
 
 
@@ -296,16 +296,25 @@ function jkl_display_accomplishments_meta_box ( $post ) {
     $jklac_meta = get_post_meta( $post->ID );
     
     $link = isset( $jklac_meta['jklac_link'] ) ? esc_url( $jklac_meta['jklac_link'][0] ) : '' ;
-    $check = isset( $jklac_meta['jklac_major'] ) ? esc_attr( $jklac_meta['jklac_major'][0] ) : '';
+    $majorchk = isset( $jklac_meta['jklac_major'] ) ? esc_attr( $jklac_meta['jklac_major'][0] ) : '';
+    $authorchk = isset( $jklac_meta['jklac_author'] ) ? esc_attr( $jklac_meta['jklac_author'][0] ) : '';
     
     ?>
     <!-- Show the URL box for the Link to the Accomplishment -->
-    <input type='url' id='jklac_link' name='jklac_link' class='widefat' value='<?php echo $link; ?>' /><br /><br />
-
+    <input type='url' id='jklac_link' name='jklac_link' class='widefat' value='<?php echo $link; ?>' />
+    <br /><br />
+    
     <!-- BELOW: Show the Checkbox to decide whether or not to add this to the main timeline -->
-    <input type='checkbox' id='jklac_major' name='jklac_major' value='1' <?php checked( $check, 1 ); ?> />
+    <input type='checkbox' id='jklac_major' name='jklac_major' value='1' <?php checked( $majorchk, 1 ); ?> />
     <label for='jklac_major'>
         <?php _e( 'Do you want this Accomplishment to appear in your Primary Timeline? (i.e. is this a <a href="http://www.access.gpo.gov/nara/cfr/waisidx_03/16cfr255_03.html">Major Accomplishment</a>?)', 'jkl-reviews/languages'); ?>
+    </label>
+    <br /><br />
+    
+    <!-- BELOW: Show the Checkbox to decide whether or not to add this to the main timeline -->
+    <input type='checkbox' id='jklac_author' name='jklac_author' value='1' <?php checked( $authorchk, 1 ); ?> />
+    <label for='jklac_author'>
+        <?php _e( 'Do you want to display the author\'s name on the Timeline? ', 'jkl-reviews/languages'); ?>
     </label>
        
     <?php
@@ -350,6 +359,13 @@ function jkl_save_meta_box( $post_id ) {
         update_post_meta( $post_id, 'jklac_major', $_POST['jklac_major'] );
     } else {
         delete_post_meta( $post_id, 'jklac_major' );
+    }
+    
+    // Save the Author Name Checkbox
+    if( isset( $_POST['jklac_author'] ) ) {
+        update_post_meta( $post_id, 'jklac_author', $_POST['jklac_author'] );
+    } else {
+        delete_post_meta( $post_id, 'jklac_author' );
     }
 }
 
@@ -404,19 +420,28 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
         }
         
         // create the timeline content
-        $html .= "<h1>$content</h1>";
+        $html .= "<div class='timeline-wrap'>";
+        $html .= "<h1 class='timeline-title'>$content</h1>";
         while ( $query->have_posts() ) : $query->the_post();
     
+            $link = get_post_meta( get_the_ID(), 'jklac_link', true );
+            $major = get_post_meta( get_the_ID(), 'jklac_major', true );
+            $difficulty = get_the_term_list( get_the_ID(), 'difficulty' ); print_r($difficulty);
+            $satisfaction = get_the_terms( get_the_ID(), 'satisfaction' );
+            $type = get_the_terms( get_the_ID(), 'type' );
+        
             // Start the Loop here
             $html .= "<article class='timeline-item group'>";       // Add class 'first' to the first article
             $html .= "<header class='timeline-info'>";
-            $html .= "<div class='date'>" . get_the_date() . "</div>";                    // Needs the publication date
-            $html .= "<div class='description'>" . get_the_excerpt() . "</div>";             // Needs the excerpt
-            $html .= "<div class='meta'>" . get_the_author() . "</div>";                    // Needs the custom taxonomies
+            $html .= "<div class='date'><strong>" . get_the_date() . "</strong></div>";
+            $html .= "<div class='title'><strong><a href='$link'>" . get_the_title() . "</a></strong></div>";
+            // $html .= "<div class='description'>" . get_the_excerpt() . "</div>";
+            $html .= "<div class='meta'>" . get_the_author() . "</div>";
             $html .= "</header>"; 
             if( has_post_thumbnail() ) {
-                $html .= "<figure class='timeline-image'>" . the_post_thumbnail() . "</figure>";    // Needs the thumbnail
+                $html .= "<figure class='timeline-image'>" . get_the_post_thumbnail() . "</figure>";
             }
+            $html .= "<div class='description'>" . get_the_excerpt() . "</div>";
             $html .= "</article>";
 
         endwhile;
@@ -430,6 +455,7 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
         $html .= "<div class='loading'><i class='fa fa-spinner'></i> Loading</div>"; // Use a FontAwesome or Dashicon here rather than an image
         $html .= "</figure>";
         $html .= "</article>";
+        $html .= "</div>";
     else :
         $html .= __( "There are no Accomplishments to boast of yet. Why don't you <a href=''>add one?</a>" ); 
     endif;
