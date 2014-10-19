@@ -10,6 +10,85 @@ html, body, .wrap {
     min-height: 100%;
 }
 
+.timeline-wrap, .timeline-info {
+    background-color: #f7f7f7;
+    padding: 20px;
+}
+
+.timeline-item {
+    margin-left: 40px;
+}
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    width: 3px;
+    background-color: silver;
+    top: 120px;
+    bottom: 20px;
+    margin-left: -17px;
+}
+.timeline-item:first-child::before {
+    top: 50px;
+}
+.dashicons::before {
+    height: 30px;
+    width: 30px;
+    background-color: #df002a;
+    color: white;
+    border-radius: 50%;
+    margin: -5px 0;
+    padding-top: 5px;
+    position: absolute;
+    left: 70px;
+    z-index: 999;
+}
+.meta {
+    margin-top: -30px;
+    padding-bottom: 20px;
+}
+.meta div {
+    float: left;
+}
+
+.type ul, .difficulty ul, .satisfaction ul {
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+}
+.type ul li, .difficulty ul li, .satisfaction ul li, .author {
+    list-style-type: none;
+    margin-left: 20px;
+    display: inline;
+}
+.type ul li a {
+    background-color: silver;
+    color: white;
+    border-radius: 10px;
+    padding: 3px 10px;
+    text-decoration: none;
+    margin-top: 3px;
+    font-size: 0.8em;
+}
+.type ul li a:hover {
+    background-color: #df002a;
+}
+
+.timeline-title {
+    border-bottom: 1px solid silver;
+}
+.timeline-title h1 {
+    font-size: 2em;
+}
+
+.timeline-body {
+    clear: both;
+    background-color: white;
+    padding: 20px;
+}
+
 img {
-    width: 100px;
+    /* width: 10px; */
+}
+.title {
+    
 }

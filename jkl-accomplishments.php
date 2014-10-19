@@ -178,7 +178,7 @@ function jkl_accomplishments_taxonomies() {
         'rewrite'               => array( 'slug' => 'types' ),
     );
     
-    register_taxonomy( 'type', array( 'accomplishments' ), $args );
+    register_taxonomy( 'type', 'accomplishments', $args );
     
     
     /*
@@ -213,7 +213,7 @@ function jkl_accomplishments_taxonomies() {
         'rewrite'                       => array( 'slug' => 'satisfaction' ),
     );
     
-    register_taxonomy( 'satisfaction', array( 'accomplishments' ), $args );
+    register_taxonomy( 'satisfaction', 'accomplishments', $args );
     
     
     /*
@@ -248,7 +248,7 @@ function jkl_accomplishments_taxonomies() {
         'rewrite'                       => array( 'slug' => 'difficulty' ),
     );
     
-    register_taxonomy( 'difficulty', array( 'accomplishments' ), $args );
+    register_taxonomy( 'difficulty', 'accomplishments', $args );
 }
 
 
@@ -382,7 +382,7 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
     $atts = shortcode_atts( // override the $atts variable with these $atts
         array(
             'major'     => false,
-            'style'     => 'two-column',    // Default to a two-column Timeline layout
+            'style'     => 'single-column',    // Default to a two-column Timeline layout
             'content'   => !empty($content) ? $content : 'My List of Accomplishments this year (' . date('Y') . ')'
         ), $atts // compare against the $atts that are passed in and overwrite whatever isn't specified
     );
@@ -418,30 +418,41 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
             wp_register_style( 'jklac_single_column_style', plugin_dir_url( __FILE__ ) . '/css/single-column.css', false, '1.0.0' );
             wp_enqueue_style( 'jklac_single_column_style' );
         }
-        
+
         // create the timeline content
         $html .= "<div class='timeline-wrap'>";
-        $html .= "<h1 class='timeline-title'>$content</h1>";
+        $html .= "<div class='timeline-title'><h1>$content</h1></div>";
         while ( $query->have_posts() ) : $query->the_post();
     
             $link = get_post_meta( get_the_ID(), 'jklac_link', true );
             $major = get_post_meta( get_the_ID(), 'jklac_major', true );
-            $difficulty = get_the_term_list( get_the_ID(), 'difficulty' ); print_r($difficulty);
-            $satisfaction = get_the_terms( get_the_ID(), 'satisfaction' );
-            $type = get_the_terms( get_the_ID(), 'type' );
         
             // Start the Loop here
             $html .= "<article class='timeline-item group'>";       // Add class 'first' to the first article
             $html .= "<header class='timeline-info'>";
+            $html .= "<div class='dashicons dashicons-flag'></div>"; // Add the Dashicon here
+            
+            // Timeline meta
+            $html .= "<div class='meta'>";
             $html .= "<div class='date'><strong>" . get_the_date() . "</strong></div>";
+            if ( get_the_term_list( get_the_ID(), 'type' ) )
+                $html .= "<div class='type'><ul>" . get_the_term_list( get_the_ID(), 'type', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
+            if ( get_the_term_list( get_the_ID(), 'difficulty' ) )
+                $html .= "<div class='difficulty'><ul>" . get_the_term_list( get_the_ID(), 'difficulty', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
+            if ( get_the_term_list( get_the_ID(), 'satisfaction' ) )
+                $html .= "<div class='satisfaction'><ul>" . get_the_term_list( get_the_ID(), 'satisfaction', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
+            $html .= "<div class='author'>" . ucwords( get_the_author() ) . "</div>";
+            $html .= "</div>";
+            $html .= "</header>";
+            
+            // Timeline body
+            $html .= "<div class='timeline-body'>";
             $html .= "<div class='title'><strong><a href='$link'>" . get_the_title() . "</a></strong></div>";
-            // $html .= "<div class='description'>" . get_the_excerpt() . "</div>";
-            $html .= "<div class='meta'>" . get_the_author() . "</div>";
-            $html .= "</header>"; 
             if( has_post_thumbnail() ) {
                 $html .= "<figure class='timeline-image'>" . get_the_post_thumbnail() . "</figure>";
             }
             $html .= "<div class='description'>" . get_the_excerpt() . "</div>";
+            $html .= "</div>";
             $html .= "</article>";
 
         endwhile;
