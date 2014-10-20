@@ -32,7 +32,14 @@
  */
 
 /*
- * Info:
+ * Inspirational Designs: 
+ * @link http://bashooka.com/inspiration/stunning-timeline-designs/
+ * 
+ * @link https://dribbble.com/shots/682757-Updates-timeline
+ * @link https://dribbble.com/shots/636960-Timeline-homepage-about-us-design-for-Mixpanel
+ * @link https://dribbble.com/shots/448593-Re-design
+ * @link https://dribbble.com/shots/562262-Timeline/attachments/42318
+ * 
  * Responsive Timeline Portfolio Page: http://webdesign.tutsplus.com/tutorials/building-the-responsive-timeline-portfolio-page--cms-19508
  * Bootstrap Style Tour: http://webdesign.tutsplus.com/articles/walk-users-through-your-website-with-bootstrap-tour--webdesign-17942
  * Excellent multipurpose theme: http://seventhqueen.com/themedemo/?product=kleo
@@ -443,11 +450,11 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
                 $html .= "<div class='satisfaction'><ul>" . get_the_term_list( get_the_ID(), 'satisfaction', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
             $html .= "<div class='author'>" . ucwords( get_the_author() ) . "</div>";
             $html .= "</div>";
+            $html .= "<div class='title'><strong><a href='$link'>" . get_the_title() . "</a></strong></div>";
             $html .= "</header>";
             
             // Timeline body
             $html .= "<div class='timeline-body'>";
-            $html .= "<div class='title'><strong><a href='$link'>" . get_the_title() . "</a></strong></div>";
             if( has_post_thumbnail() ) {
                 $html .= "<figure class='timeline-image'>" . get_the_post_thumbnail() . "</figure>";
             }
@@ -468,7 +475,7 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
         $html .= "</article>";
         $html .= "</div>";
     else :
-        $html .= __( "There are no Accomplishments to boast of yet. Why don't you <a href='" . site_url( '/wp-admin/post-new.php?post_type=accomplishments/' ) . "'>add one?</a>" ); 
+        $html .= __( "There are no Accomplishments to boast of yet. Why don't you <a href='" . site_url( '/wp-admin/post-new.php?post_type=accomplishments' ) . "'>add one?</a>" ); 
     endif;
     
     

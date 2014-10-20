@@ -11,13 +11,38 @@ html, body, .wrap {
 }
 
 .timeline-wrap, .timeline-info {
-    background-color: #f7f7f7;
+    background-color: #efefef;
     padding: 20px;
+    position: relative;
 }
 
-.timeline-item {
-    margin-left: 40px;
+.timeline-body {
+    clear: both;
+    background-color: white;
+    padding: 20px;
+    display: none;
 }
+.timeline-info {
+    border: 1px solid silver;
+    border-radius: 5px;
+}
+.timeline-info:hover {
+    border: 3px solid #df002a;
+    background-color: white;
+    margin: -2px;
+}
+.timeline-info::before {
+    width: 0; 
+    height: 0; 
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent; 
+    border-right: 10px solid blue;
+    z-index: 999;
+}
+.timeline-item {
+    margin: 0 0 20px 50px;
+}
+
 .timeline-item::before {
     content: "";
     position: absolute;
@@ -25,21 +50,25 @@ html, body, .wrap {
     background-color: silver;
     top: 120px;
     bottom: 20px;
-    margin-left: -17px;
+    margin-left: -37px;
 }
 .timeline-item:first-child::before {
     top: 50px;
 }
+.date {
+
+}
+
 .dashicons::before {
-    height: 30px;
-    width: 30px;
+    height: 20px;
+    width: 20px;
+    border: 5px solid #df002a;
     background-color: #df002a;
     color: white;
     border-radius: 50%;
-    margin: -5px 0;
-    padding-top: 5px;
+    margin: -10px 0;
     position: absolute;
-    left: 70px;
+    left: -50px;
     z-index: 999;
 }
 .meta {
@@ -75,16 +104,13 @@ html, body, .wrap {
 
 .timeline-title {
     border-bottom: 1px solid silver;
+    margin-bottom: 20px;
 }
 .timeline-title h1 {
     font-size: 2em;
 }
 
-.timeline-body {
-    clear: both;
-    background-color: white;
-    padding: 20px;
-}
+
 
 img {
     /* width: 10px; */

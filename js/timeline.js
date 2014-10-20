@@ -4,4 +4,12 @@
  * and open the template in the editor.
  */
 
+var main = function() {
+    $('.timeline-info').hover(function() {
+        $('.timeline-body').slideDown( 'slow', function() {
+            
+        });
+    });
+};
 
+$(document).ready(main);
