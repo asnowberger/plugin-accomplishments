@@ -9,74 +9,80 @@
 html, body, .wrap {
     min-height: 100%;
 }
+.timeline-wrap, 
+.timeline,
+.timeline-item,
+.timeline-info, 
+.timeline-body, 
+.timeline-meta {
+    margin: 0;
+    padding: 0;
+}
+.timeline-wrap ul {
+    list-style: none;
+}
+.timeline-wrap ul li {
+    list-style-type: none;
+}
 
 .timeline-wrap, .timeline-info {
-    background-color: #efefef;
+    background-color: #f0f0f0;
     padding: 20px;
     position: relative;
+}
+.timeline-info {
+    background-color: #f9f9f9;
 }
 
 .timeline-body {
     clear: both;
-    background-color: white;
+    background-color: #f9f9f9;
+    border: 2px solid #df002a;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
     padding: 20px;
     display: none;
+    margin: -1px;
+}
+.open {
+    display: block;
 }
 .timeline-info {
     border: 1px solid silver;
     border-radius: 5px;
+    min-height: 120px;
 }
 .timeline-info:hover {
-    border: 3px solid #df002a;
+    border: 2px solid #df002a;
     background-color: white;
-    margin: -2px;
+    margin: -1px;
+    border-bottom: 1px solid silver;
+    border-radius: 5px 5px 0 0;
 }
+
 .timeline-info::before {
+    content: '';
     width: 0; 
     height: 0; 
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent; 
-    border-right: 10px solid blue;
+    border-right: 10px solid silver;
     z-index: 999;
-}
-.timeline-item {
-    margin: 0 0 20px 50px;
-}
-
-.timeline-item::before {
-    content: "";
     position: absolute;
-    width: 3px;
-    background-color: silver;
-    top: 120px;
-    bottom: 20px;
-    margin-left: -37px;
+    left: -10px;
 }
-.timeline-item:first-child::before {
-    top: 50px;
+.timeline-info:hover::before {
+    border-right: 10px solid #df002a;
 }
-.date {
+.timeline-image {
+    border-bottom: 1px solid silver;
+    margin: -20px;
+    margin-bottom: 20px;
+    padding: 20px;
+}
 
-}
-
-.dashicons::before {
-    height: 20px;
-    width: 20px;
-    border: 5px solid #df002a;
-    background-color: #df002a;
-    color: white;
-    border-radius: 50%;
-    margin: -10px 0;
-    position: absolute;
-    left: -50px;
-    z-index: 999;
-}
 .meta {
-    margin-top: -30px;
     padding-bottom: 20px;
-}
-.meta div {
-    float: left;
 }
 
 .type ul, .difficulty ul, .satisfaction ul {
@@ -96,7 +102,6 @@ html, body, .wrap {
     padding: 3px 10px;
     text-decoration: none;
     margin-top: 3px;
-    font-size: 0.8em;
 }
 .type ul li a:hover {
     background-color: #df002a;
@@ -111,10 +116,79 @@ html, body, .wrap {
 }
 
 
-
-img {
-    /* width: 10px; */
+.timeline-item {
+    margin: 0 0 20px 50px;
 }
-.title {
-    
+
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    width: 3px;
+    background-color: silver;
+    top: 120px;
+    bottom: 20px;
+    margin-left: -37px;
+}
+.timeline-item:first-child::before {
+    top: 50px;
+}
+
+
+.dashicons::before {
+    height: 20px;
+    width: 20px;
+    border: 5px solid #df002a;
+    background-color: #df002a;
+    color: white;
+    border-radius: 50%;
+    margin: -10px 0;
+    position: absolute;
+    left: -50px;
+    z-index: 999;
+}
+.dashicons::after {
+    width: 0; 
+    height: 0; 
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent; 
+    border-right: 10px solid blue;
+    z-index: 999;
+}
+
+.dashicons-clock::before {
+    color: inherit;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    display: inline;
+    border: none;
+    background-color: transparent;
+    left: 0;
+}
+.date, .type, .author {
+    float: left;
+    font-size: 0.8em;
+}
+.type {
+    clear: right;
+}
+.timeline-thumb {
+    float: left;
+    width: 100px;
+    border-radius: 5px;
+    padding-right: 20px;
+}
+
+.timeline-item .title a {
+    color: #555;
+    font-weight: 500;
+    margin-top: 30px;
+    text-decoration: none;
+    font-size: 1.3em;
+    position: relative;
+    padding: 20px 0;
+}
+.timeline-data, .timeline-info .title {
+    width: 100%;
+    float: left;
 }

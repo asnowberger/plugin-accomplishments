@@ -40,6 +40,11 @@
  * @link https://dribbble.com/shots/448593-Re-design
  * @link https://dribbble.com/shots/562262-Timeline/attachments/42318
  * 
+ * Timeline Styling:
+ * @link http://tympanus.net/codrops/2013/05/02/vertical-timeline/
+ * @link http://codyhouse.co/gem/vertical-timeline/
+ * @link http://codepen.io/P233/pen/lGewF
+ * 
  * Responsive Timeline Portfolio Page: http://webdesign.tutsplus.com/tutorials/building-the-responsive-timeline-portfolio-page--cms-19508
  * Bootstrap Style Tour: http://webdesign.tutsplus.com/articles/walk-users-through-your-website-with-bootstrap-tour--webdesign-17942
  * Excellent multipurpose theme: http://seventhqueen.com/themedemo/?product=kleo
@@ -425,54 +430,82 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
             wp_register_style( 'jklac_single_column_style', plugin_dir_url( __FILE__ ) . '/css/single-column.css', false, '1.0.0' );
             wp_enqueue_style( 'jklac_single_column_style' );
         }
+        
+        // call the jQuery function to handle the functionality
+        wp_register_script( 'timeline', plugin_dir_url( __FILE__ ) . 'js/timeline.js', array( 'jquery' ) );
+        wp_enqueue_script( 'timeline' );
 
         // create the timeline content
         $html .= "<div class='timeline-wrap'>";
         $html .= "<div class='timeline-title'><h1>$content</h1></div>";
+        
+        $html .= "<ul class='timeline'>";
         while ( $query->have_posts() ) : $query->the_post();
     
             $link = get_post_meta( get_the_ID(), 'jklac_link', true );
             $major = get_post_meta( get_the_ID(), 'jklac_major', true );
         
             // Start the Loop here
-            $html .= "<article class='timeline-item group'>";       // Add class 'first' to the first article
-            $html .= "<header class='timeline-info'>";
-            $html .= "<div class='dashicons dashicons-flag'></div>"; // Add the Dashicon here
-            
-            // Timeline meta
-            $html .= "<div class='meta'>";
-            $html .= "<div class='date'><strong>" . get_the_date() . "</strong></div>";
-            if ( get_the_term_list( get_the_ID(), 'type' ) )
-                $html .= "<div class='type'><ul>" . get_the_term_list( get_the_ID(), 'type', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
-            if ( get_the_term_list( get_the_ID(), 'difficulty' ) )
-                $html .= "<div class='difficulty'><ul>" . get_the_term_list( get_the_ID(), 'difficulty', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
-            if ( get_the_term_list( get_the_ID(), 'satisfaction' ) )
-                $html .= "<div class='satisfaction'><ul>" . get_the_term_list( get_the_ID(), 'satisfaction', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
-            $html .= "<div class='author'>" . ucwords( get_the_author() ) . "</div>";
-            $html .= "</div>";
-            $html .= "<div class='title'><strong><a href='$link'>" . get_the_title() . "</a></strong></div>";
-            $html .= "</header>";
-            
-            // Timeline body
-            $html .= "<div class='timeline-body'>";
-            if( has_post_thumbnail() ) {
-                $html .= "<figure class='timeline-image'>" . get_the_post_thumbnail() . "</figure>";
-            }
-            $html .= "<div class='description'>" . get_the_excerpt() . "</div>";
-            $html .= "</div>";
-            $html .= "</article>";
+            $html .= "<li class='timeline-item'>";  // Timeline item
+                $html .= "<div class='dashicons dashicons-flag'></div>"; // Add the Dashicon for Type
+                if ( $major )
+                    $html .= "<div class='dashicons dashicons-star'></div>"; // Dashicon star if a "major" event
+                
+                // Timeline header (always visible)
+                $html .= "<header class='timeline-info'>";
+                    if( has_post_thumbnail() ) {
+                        $html .= "<figure class='timeline-thumb'>" . get_the_post_thumbnail( get_the_ID(), 'thumbnail' ) . "</figure>";
+                    }
+
+                    $html .= "<div class='timeline-data'>";
+                        $html .= "<div class='date'><div class='dashicons dashicons-clock'></div>&nbsp;&nbsp;" . get_the_date() . "</div>";
+                        if ( get_the_term_list( get_the_ID(), 'type' ) )
+                            $html .= "<div class='type'><ul>" . get_the_term_list( get_the_ID(), 'type', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
+                        $html .= "<div class='author'>" . ucwords( get_the_author() ) . "</div>";
+                    $html .= "</div>";
+                    
+                    $html .= "<div class='title'><a href='$link'>" . get_the_title() . "</a></div>";
+
+                $html .= "</header>"; // End header
+
+                // Check to be sure there's actually some stuff to put in the timeline-body
+                if ( has_post_thumbnail() || has_excerpt() || has_term() ) :
+                
+                // Timeline body (only visible on mouseover (uses jQuery))
+                $html .= "<div class='timeline-body open'>";
+                    if( has_post_thumbnail() ) {
+                        $html .= "<figure class='timeline-image'>" . get_the_post_thumbnail() . "</figure>";
+                    }
+                    
+                    // Timeline meta
+                    $html .= "<div class='meta'>";
+                        if ( has_excerpt() )
+                            $html .= "<div class='description'>" . get_the_excerpt() . "</div>";
+                        if ( get_the_term_list( get_the_ID(), 'difficulty' ) )
+                            $html .= "<div class='difficulty'><ul>" . get_the_term_list( get_the_ID(), 'difficulty', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
+                        if ( get_the_term_list( get_the_ID(), 'satisfaction' ) )
+                            $html .= "<div class='satisfaction'><ul>" . get_the_term_list( get_the_ID(), 'satisfaction', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
+                    $html .= "</div>"; // end meta
+                    
+                $html .= "</div>"; // end Timeline body
+                
+                endif;
+                
+            $html .= "</li>"; // end Timeline item
 
         endwhile;
+        $html .= "</ul>";
 
         wp_reset_postdata();
         
-        // Add the 'Load More' link here (Turn this OFF if all posts are loaded already)
-        $html .= "<article class='timeline-item group loading-wrap'>";
-        $html .= "<header class='timeline-info'></header>";
-        $html .= "<figure class='timeline-image'>";
-        $html .= "<div class='loading'><i class='fa fa-spinner'></i> Loading</div>"; // Use a FontAwesome or Dashicon here rather than an image
-        $html .= "</figure>";
-        $html .= "</article>";
+            // Add the 'Load More' link here (Turn this OFF if all posts are loaded already)
+            $html .= "<article class='timeline-load group loading-wrap'>";
+            $html .= "<header class='timeline-info'></header>";
+            $html .= "<figure class='timeline-image'>";
+            $html .= "<div class='loading'><i class='fa fa-spinner'></i> Loading</div>"; // Use a FontAwesome or Dashicon here rather than an image
+            $html .= "</figure>";
+            $html .= "</article>";
+        
         $html .= "</div>";
     else :
         $html .= __( "There are no Accomplishments to boast of yet. Why don't you <a href='" . site_url( '/wp-admin/post-new.php?post_type=accomplishments' ) . "'>add one?</a>" ); 
