@@ -468,7 +468,7 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
         $html .= "</article>";
         $html .= "</div>";
     else :
-        $html .= __( "There are no Accomplishments to boast of yet. Why don't you <a href=''>add one?</a>" ); 
+        $html .= __( "There are no Accomplishments to boast of yet. Why don't you <a href='" . site_url( '/wp-admin/post-new.php?post_type=accomplishments/' ) . "'>add one?</a>" ); 
     endif;
     
     
