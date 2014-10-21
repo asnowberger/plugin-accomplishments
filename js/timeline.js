@@ -5,10 +5,8 @@
  */
 
 var main = function() {
-    $('.timeline-info').hover(function() {
-        $('.timeline-body').slideDown( 'slow', function() {
-            
-        });
+    $('.timeline-info').click(function() {
+        $('.timeline-body').slideToggle();
     });
 };
 

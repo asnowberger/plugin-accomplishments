@@ -444,47 +444,64 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
     
             $link = get_post_meta( get_the_ID(), 'jklac_link', true );
             $major = get_post_meta( get_the_ID(), 'jklac_major', true );
+
+            if( has_post_thumbnail() || has_excerpt() || has_term() ) 
+                $expand = 'expand'; 
+            else 
+                $expand = '';
         
             // Start the Loop here
-            $html .= "<li class='timeline-item'>";  // Timeline item
-                $html .= "<div class='dashicons dashicons-flag'></div>"; // Add the Dashicon for Type
-                if ( $major )
-                    $html .= "<div class='dashicons dashicons-star'></div>"; // Dashicon star if a "major" event
+            $html .= "<li class='timeline-item $expand'>";  // Timeline item
+                $html .= "<i class='dashicons dashicons-flag'></i>"; // Add the Dashicon for Type
                 
                 // Timeline header (always visible)
-                $html .= "<header class='timeline-info'>";
+                if( $expand == 'expand' )
+                    $html .= "<div class='timeline-info'>";
+                else
+                    $html .= "<div class='timeline-info-plain'>";
+                    if ( $major )
+                        $html .= "<div class='timeline-major'><i class='dashicons dashicons-star-empty'></i></div>"; // Dashicon star if a "major" event
                     if( has_post_thumbnail() ) {
                         $html .= "<figure class='timeline-thumb'>" . get_the_post_thumbnail( get_the_ID(), 'thumbnail' ) . "</figure>";
-                    } 
-
-                    $html .= "<div class='timeline-data'>";
-                        $html .= "<div class='date'><div class='dashicons dashicons-clock'></div>&nbsp;&nbsp;" . get_the_date() . "</div>";
+                        $html .= "<div class='timeline-data-thumb'>";
+                    } else {
+                        $html .= "<div class='timeline-data-no-thumb'>";
+                    }
+                        $html .= "<div class='timeline-data'>";
+                        $html .= "<div class='timeline-date'><i class='dashicons dashicons-clock'></i>&nbsp;&nbsp;" . get_the_date() . "</div>";
                         if ( get_the_term_list( get_the_ID(), 'type' ) )
-                            $html .= "<div class='type'><ul>" . get_the_term_list( get_the_ID(), 'type', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
-                        $html .= "<div class='author'>" . ucwords( get_the_author() ) . "</div>";
-                    $html .= "</div>";
+                            $html .= "<div class='timeline-type'><ul>" . get_the_term_list( get_the_ID(), 'type', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
+                        $html .= "<div class='timeline-author'>" . ucwords( get_the_author() ) . "</div>";
+                    $html .= "</div>"; // End timeline-data
                     
-                    $html .= "<div class='timeline-item-title'><a href='$link'>" . get_the_title() . "</a></div>";
+                    if( $link )
+                        $html .= "<div class='timeline-item-title'><a href='$link'>" . get_the_title() . "</a></div>";
+                    else 
+                        $html .= "<div class='timeline-item-title'>" . get_the_title() . "</div>";
+                    $html .= "</div>"; // End timeline-data-thumb or timeline-data-no-thumb
+                    
+                    if ( $expand !== '' )
+                        $html .= "<div class='timeline-expand-button'><i class='dashicons dashicons-arrow-down'></i></div>";
                     $html .= "<div class='timeline-clear'></div>";
-                $html .= "</header>"; // End header
+                $html .= "</div>"; // End Timeline-info
 
                 // Check to be sure there's actually some stuff to put in the timeline-body
-                if ( has_post_thumbnail() || has_excerpt() || has_term() ) :
+                if ( $expand !== '' ) :
                 
                 // Timeline body (only visible on mouseover (uses jQuery))
-                $html .= "<div class='timeline-body open'>";
+                $html .= "<div class='timeline-body'>"; // Initially hidden div 
                     if( has_post_thumbnail() ) {
                         $html .= "<figure class='timeline-image'>" . get_the_post_thumbnail() . "</figure>";
                     }
                     
                     // Timeline meta
-                    $html .= "<div class='meta'>";
+                    $html .= "<div class='timeline-meta'>";
                         if ( has_excerpt() )
-                            $html .= "<div class='description'>" . get_the_excerpt() . "</div>";
+                            $html .= "<div class='timeline-description'>" . get_the_excerpt() . "</div>";
                         if ( get_the_term_list( get_the_ID(), 'difficulty' ) )
-                            $html .= "<div class='difficulty'><ul>" . get_the_term_list( get_the_ID(), 'difficulty', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
+                            $html .= "<div class='timeline-difficulty'><ul>" . get_the_term_list( get_the_ID(), 'difficulty', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
                         if ( get_the_term_list( get_the_ID(), 'satisfaction' ) )
-                            $html .= "<div class='satisfaction'><ul>" . get_the_term_list( get_the_ID(), 'satisfaction', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
+                            $html .= "<div class='timeline-satisfaction'><ul>" . get_the_term_list( get_the_ID(), 'satisfaction', '<li>', '</li><li>', '</li>' ) . "</ul></div>";
                     $html .= "</div>"; // end meta
                     
                 $html .= "</div>"; // end Timeline body
