@@ -1,12 +1,14 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
-/* 
-    Created on : Oct 19, 2014, 5:05:25 AM
-    Author     : jekkilekki
-*/
+// Main styles
+* { // The following styles allow the elements to have percentage widths INCLUSIVE of their padding
+    position: relative;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+html, body, .wrap {
+    min-height: 100%;
+}
 
 .timeline-wrap {
     background-color: #efefef;

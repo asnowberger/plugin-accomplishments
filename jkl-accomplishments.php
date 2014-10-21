@@ -436,10 +436,10 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
         wp_enqueue_script( 'timeline' );
 
         // create the timeline content
-        $html .= "<div class='timeline-wrap'>";
-        $html .= "<div class='timeline-title'><h1>$content</h1></div>";
+        $html .= "<div id='timeline-wrap'>";
+        $html .= "<div id='timeline-title'><h1>$content</h1></div>";
         
-        $html .= "<ul class='timeline'>";
+        $html .= "<ul id='timeline'>";
         while ( $query->have_posts() ) : $query->the_post();
     
             $link = get_post_meta( get_the_ID(), 'jklac_link', true );
@@ -455,7 +455,7 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
                 $html .= "<header class='timeline-info'>";
                     if( has_post_thumbnail() ) {
                         $html .= "<figure class='timeline-thumb'>" . get_the_post_thumbnail( get_the_ID(), 'thumbnail' ) . "</figure>";
-                    }
+                    } 
 
                     $html .= "<div class='timeline-data'>";
                         $html .= "<div class='date'><div class='dashicons dashicons-clock'></div>&nbsp;&nbsp;" . get_the_date() . "</div>";
@@ -464,8 +464,8 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
                         $html .= "<div class='author'>" . ucwords( get_the_author() ) . "</div>";
                     $html .= "</div>";
                     
-                    $html .= "<div class='title'><a href='$link'>" . get_the_title() . "</a></div>";
-
+                    $html .= "<div class='timeline-item-title'><a href='$link'>" . get_the_title() . "</a></div>";
+                    $html .= "<div class='timeline-clear'></div>";
                 $html .= "</header>"; // End header
 
                 // Check to be sure there's actually some stuff to put in the timeline-body
