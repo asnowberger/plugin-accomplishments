@@ -480,9 +480,9 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
                         $html .= "<div class='timeline-item-title'>" . get_the_title() . "</div>";
                     $html .= "</div>"; // End timeline-data-thumb or timeline-data-no-thumb
                     
+                    $html .= "<div class='timeline-clear'></div>";
                     if ( $expand !== '' )
                         $html .= "<div class='timeline-expand-button'><i class='dashicons dashicons-arrow-down'></i></div>";
-                    $html .= "<div class='timeline-clear'></div>";
                 $html .= "</div>"; // End Timeline-info
 
                 // Check to be sure there's actually some stuff to put in the timeline-body
