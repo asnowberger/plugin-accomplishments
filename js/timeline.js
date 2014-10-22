@@ -4,10 +4,40 @@
  * and open the template in the editor.
  */
 
-var main = function() {
-    $('.timeline-info').click(function() {
-        $('.timeline-body').slideToggle();
+jQuery(document).ready(function($) {
+    jQuery('.timeline-body').hide();
+    
+    jQuery('.timeline-info').hover(function() {
+        if( jQuery(this).hasClass('hovered') ) {
+            jQuery(this).removeClass('hovered');
+        } else {
+            jQuery(this).addClass('hovered');
+        }
     });
-};
-
-$(document).ready(main);
+    
+    jQuery('.timeline-expand-button').hover(function() {
+        if( jQuery(this).prev('.timeline-info').hasClass('hovered') ) {
+            jQuery(this).prev('.timeline-info').removeClass('hovered');
+        } else {
+            jQuery(this).prev('.timeline-info').addClass('hovered');
+        }
+    });
+    
+    jQuery('.timeline-expand-button').click(
+        function() {
+            if( jQuery(this).prev('.timeline-info').hasClass('active') ) {
+                jQuery(this).prev('.timeline-info').removeClass('active');
+            } else {
+                jQuery(this).prev('.timeline-info').addClass('active');
+            }
+            
+            jQuery(this).next('.timeline-body').slideToggle( 'slow' );
+            
+            jQuery(this).next('.dashicons').removeClass('dashicons-down-arrow');
+            jQuery(this).next('.dashicons').addClass('dashicons-up-arrow');
+        }
+    );
+    
+    
+    
+});

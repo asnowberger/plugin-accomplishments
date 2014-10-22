@@ -25,11 +25,12 @@
 }
 .timeline-title h1 {
     font-size: 2em;
+    margin: 0;
 }
 
 #timeline-wrap {
-    background-color: #f0f0f0;
-    padding: 20px;
+    /*background-color: #f0f0f0;
+    padding: 20px;*/
 }
 
 .timeline-item {
@@ -48,7 +49,7 @@
 .timeline-item:first-child::before {
     top: 30px;
 }
-.timeline-major, .timeline-expand-button {
+.timeline-major {
     position: absolute;
     font-size: 0.6em;
 }
@@ -57,8 +58,10 @@
     top: 5px;
 }
 .timeline-expand-button {
-    right: 10px;
-    bottom: 10px;
+    font-size: 0.6em;
+    position: relative;
+    float: right;
+    margin: -20px 10px 0 0;
 }
 
 /* The icon */
@@ -82,12 +85,12 @@
     position: relative;
     border: none;
     background-color: transparent;
-    height: 10px;
-    width: 10px;
+    height: 12px;
+    width: 12px;
         
 }
 .dashicons-clock {
-    top: -6px;
+    top: -4px;
     left: -2px;
 }
 .dashicons-arrow-down {
@@ -97,7 +100,7 @@
     top: 0px;
 }
 .dashicons-arrow-down:before{
-    left: -3px;
+    left: -2px;
     top: -10px;
     position: absolute;
 }
@@ -123,13 +126,16 @@
     border: 1px solid silver;
     border-radius: 10px;
 }
-.timeline-info:hover {
-    border: 2px solid #df002a;
+.timeline-info-plain {
     background-color: white;
-    margin-bottom: -2px;
+}
+.hovered {
+    border: 1px solid #df002a;
+    background-color: white;
+    margin-bottom: 0px;
     /* border-bottom: 1px solid silver; */
     border-radius: 10px;
-    box-shadow: 0px 2px 5px #999;
+    box-shadow: 0px 2px 4px #999;
 }
 .timeline-info-plain {
     margin: -1px;
@@ -157,25 +163,24 @@
     border-width: 13px;
     top: 17px;
 }
-.timeline-info:hover:before {
+.timeline-info-plain:after {
+    border-right-color: white;
+}
+.active:before, .hovered:before {
     border-right-color: #df002a;
 }
-.timeline-info:hover:after {
+.active:after, .hovered:after {
     border-right-color: white;
 }
 
 .timeline-body {
     clear: both;
-    background-color: #f9f9f9;
-    border: 2px solid #df002a;
+    background-color: white;
+    border: 1px solid #df002a;
     border-top: none;
     border-radius: 0 0 10px 10px;
     padding: 20px;
-    display: none;
-    margin: -1px;
-}
-.open {
-    display: block;
+    box-shadow: 0px 2px 4px #999;
 }
 
 
@@ -185,40 +190,46 @@
     margin: -20px;
     margin-bottom: 20px;
     padding: 20px;
-    background-color: silver;
+    background-color: #f0f0f0;
 }
 
 .timeline-meta {
-    padding-bottom: 20px;
+
 }
 
-.timeline-type ul, .timeline-difficulty ul, .timeline-satisfaction ul {
+.timeline-type, .timeline-difficulty, .timeline-satisfaction {
     list-style: none;
     margin: 0px;
     padding: 0px;
 }
-.timeline-type ul li, .timeline-difficulty ul li, .timeline-satisfaction ul li, .timeline-author {
+.timeline-type li, .timeline-difficulty li, .timeline-satisfaction li, .timeline-author {
     list-style-type: none;
     margin-left: 20px;
     display: inline;
 }
-.timeline-type ul li a {
+.timeline-type li a, .timeline-difficulty li a, .timeline-satisfaction li a {
     background-color: silver;
     color: white;
     border-radius: 10px;
-    padding: 3px 10px;
+    padding: 2px 10px;
     text-decoration: none;
     margin-top: 3px;
 }
-.timeline-type ul li a:hover {
+.timeline-type li a:hover, .timeline-difficulty li a:hover, .timeline-satisfaction li a:hover {
     background-color: #df002a;
 }
 
-
+.active {
+    border-color: #df002a;
+    background-color: white;
+    border-bottom: 1px solid silver;
+    border-radius: 10px 10px 0 0;
+    box-shadow: none;
+}
 
 .timeline-data-thumb {
     width: 80%;
-    margin-left: 70px;
+    margin-left: 80px;
 }
 
 
@@ -233,7 +244,7 @@
 }
 .timeline-thumb img {
     float: left;
-    width: 50px;
+    width: 60px;
     border-radius: 5px;
 }
 
@@ -260,6 +271,24 @@
 .timeline-data-thumb {
     width: 80%;
 }
+.timeline-feeling {
+    font-size: 0.8em;
+    margin-top: 20px;
+    padding: 20px 0 25px;
+    border-top: 1px solid silver;
+    opacity: 0.6;
+}
+.timeline-feeling ul {
+    float: left;
+    width: 50%;
+}
+.timeline-difficulty li, .timeline-satisfaction li {
+    margin-left: 5px;
+}
+.timeline-difficulty li a, .timeline-satisfaction li a {
+    padding: 1px 7px;
+}
+
 
 .timeline-clear {
     clear: both;
