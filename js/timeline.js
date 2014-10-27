@@ -32,9 +32,6 @@ jQuery(document).ready(function($) {
             }
             
             jQuery(this).next('.timeline-body').slideToggle( 'slow' );
-            
-            jQuery(this).next('.dashicons').removeClass('dashicons-down-arrow');
-            jQuery(this).next('.dashicons').addClass('dashicons-up-arrow');
         }
     );
     
