@@ -7,7 +7,7 @@
 jQuery(document).ready(function($) {
     jQuery('.timeline-body').hide();
     
-    jQuery('.timeline-info').hover(function() {
+    jQuery('.timeline-info-expand').hover(function() {
         if( jQuery(this).hasClass('hovered') ) {
             jQuery(this).removeClass('hovered');
         } else {
@@ -16,19 +16,19 @@ jQuery(document).ready(function($) {
     });
     
     jQuery('.timeline-expand-button').hover(function() {
-        if( jQuery(this).prev('.timeline-info').hasClass('hovered') ) {
-            jQuery(this).prev('.timeline-info').removeClass('hovered');
+        if( jQuery(this).prev('.timeline-info-expand').hasClass('hovered') ) {
+            jQuery(this).prev('.timeline-info-expand').removeClass('hovered');
         } else {
-            jQuery(this).prev('.timeline-info').addClass('hovered');
+            jQuery(this).prev('.timeline-info-expand').addClass('hovered');
         }
     });
     
     jQuery('.timeline-expand-button').click(
         function() {
-            if( jQuery(this).prev('.timeline-info').hasClass('active') ) {
-                jQuery(this).prev('.timeline-info').removeClass('active');
+            if( jQuery(this).prev('.timeline-info-expand').hasClass('active') ) {
+                jQuery(this).prev('.timeline-info-expand').removeClass('active');
             } else {
-                jQuery(this).prev('.timeline-info').addClass('active');
+                jQuery(this).prev('.timeline-info-expand').addClass('active');
             }
             
             jQuery(this).next('.timeline-body').slideToggle( 'slow' );
@@ -39,13 +39,18 @@ jQuery(document).ready(function($) {
         function() {
             if( jQuery('.timeline-expand-all-button').hasClass('active') ) {
                 jQuery('.timeline-expand-all-button').removeClass('active');
+                jQuery('.timeline-info').removeClass('active');
+                jQuery('.timeline-info').removeClass('hovered');
                 jQuery('.timeline-body').removeClass('show-all');
+                jQuery('.timeline-body').slideUp( 'slow' );
+            // #B : Is the button NOT ACTIVE? (and we want to OPEN everything)
             } else {
                 jQuery('.timeline-expand-all-button').addClass('active');
+                jQuery('.timeline-info').removeClass('active');
+                jQuery('.timeline-info').removeClass('hovered');
                 jQuery('.timeline-body').addClass('show-all');
+                jQuery('.timeline-body').slideDown( 'slow' );
             }
-            
-            jQuery('.timeline-body').slideToggle( 'slow' );
         });
     
     

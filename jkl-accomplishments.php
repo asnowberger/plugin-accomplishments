@@ -54,6 +54,12 @@
 // ##B Create the plugin Deactivation function
 // ##C Create the plugin Uninstall function
 
+// ##0 : Be sure Dashicons load for non-logged-in users
+add_action( 'wp_enqueue_scripts', 'jk_load_dashicons' );
+function jk_load_dashicons() {
+    wp_enqueue_style( 'dashicons' );
+}
+
 // ##1 : Create the Custom Post Type AND flush rewrite rules to make permalinks work with new CPT slug
 add_action( 'init', 'jkl_accomplishments_posttype' );
 register_activation_hook( __FILE__, 'jkl_rewrite_flush' );
@@ -452,21 +458,18 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
             // If so, we'll display a dropdown arrow in the box AND an "Expand ALL" button
             // If not, the box styling is different altogether (static)
             if( has_post_thumbnail() || has_excerpt() || has_term() ) 
-                $expand = 'expand'; 
+                $expand = '-expand'; 
             else 
                 $expand = '';
         
             /*
              * Start the Loop here
              */
-            $html .= "<li class='timeline-item $expand'>";  // Timeline item
+            $html .= "<li class='timeline-item'>";  // Timeline item
                 $html .= "<i class='dashicons dashicons-flag'></i>"; // Add the Dashicon for Type
                 
                 // Timeline header (always visible)
-                if( $expand == 'expand' )
-                    $html .= "<div class='timeline-info'>";
-                else
-                    $html .= "<div class='timeline-info-plain'>";
+                $html .= "<div class='timeline-info$expand'>";
                     if ( $major )
                         $html .= "<div class='timeline-major'><i class='dashicons dashicons-star-empty'></i></div>"; // Dashicon star if a "major" event
                     if( has_post_thumbnail() ) {

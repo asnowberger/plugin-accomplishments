@@ -4,7 +4,6 @@
 #timeline,
 .timeline-item,
 .timeline-info, 
-.timeline-info-plain
 .timeline-body, 
 .timeline-meta {
     margin: 0;
@@ -120,13 +119,13 @@
 }
 
 /* The arrow */
-.timeline-info, .timeline-info-plain {
+.timeline-info, .timeline-info-expand {
     background-color: #f9f9f9;
     padding: 20px;
     border: 1px solid silver;
     border-radius: 10px;
 }
-.timeline-info-plain {
+.timeline-info {
     background-color: white;
 }
 .hovered {
@@ -137,14 +136,15 @@
     border-radius: 10px;
     box-shadow: 0px 2px 4px #999;
 }
-.timeline-info-plain {
+/*
+.timeline-info, .timeline-info-expand, .timeline-body {
     margin: -1px;
-}
+}*/
 
 .timeline-info:before, 
 .timeline-info:after, 
-.timeline-info-plain:before,
-.timeline-info-plain:after {
+.timeline-info-expand:before,
+.timeline-info-expand:after {
     content: '';
     width: 0; 
     height: 0; 
@@ -153,17 +153,20 @@
     pointer-events: none;
     right: 100%;
 }
-.timeline-info:before, .timeline-info-plain:before {
+.timeline-info:before, .timeline-info-expand:before {
     border-right-color: silver;
     border-width: 15px;
     top: 15px;
 }
-.timeline-info:after, .timeline-info-plain:after {
+.timeline-info:after, .timeline-info-expand:after {
     border-right-color: #f9f9f9;
     border-width: 13px;
     top: 17px;
 }
-.timeline-info-plain:after {
+.timeline-info-expand:before, .timeline-info-expand:after {
+    margin-right: -1px;
+}
+.timeline-info-expand:after {
     border-right-color: white;
 }
 .active:before, .hovered:before {
