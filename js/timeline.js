@@ -35,6 +35,19 @@ jQuery(document).ready(function($) {
         }
     );
     
+    jQuery('.timeline-expand-all-button').click(
+        function() {
+            if( jQuery('.timeline-expand-all-button').hasClass('active') ) {
+                jQuery('.timeline-expand-all-button').removeClass('active');
+                jQuery('.timeline-body').removeClass('show-all');
+            } else {
+                jQuery('.timeline-expand-all-button').addClass('active');
+                jQuery('.timeline-body').addClass('show-all');
+            }
+            
+            jQuery('.timeline-body').slideToggle( 'slow' );
+        });
+    
     
     
 });

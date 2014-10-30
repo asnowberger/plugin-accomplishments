@@ -183,7 +183,26 @@
     box-shadow: 0px 2px 4px #999;
 }
 
+.show-all {
+    border-color: silver;
+    box-shadow: none;
+}
 
+.timeline-info .show-all {
+    border-radius: 0px;
+}
+
+.timeline-expand-all-button {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding: 2px 10px;
+    border-left: 1px solid silver;
+    border-right: 1px solid silver;
+    background-color: transparent;
+    color: silver;
+    margin-top: 5px;
+}
 
 .timeline-image {
     border-bottom: 1px solid silver;

@@ -439,6 +439,8 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
         $html .= "<div id='timeline-wrap'>";
         $html .= "<h1 id='timeline-title'>$content</h1>";
         
+        $html .= "<button class='timeline-expand-all-button'>Expand All</button>"; 
+        
         $html .= "<ul id='timeline'>";
         while ( $query->have_posts() ) : $query->the_post();
     
@@ -447,7 +449,7 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
             $author = get_post_meta( get_the_ID(), 'jklac_author', true );
 
             // Check to see if there is expandable content. 
-            // If so, we'll display a dropdown arrow in the box
+            // If so, we'll display a dropdown arrow in the box AND an "Expand ALL" button
             // If not, the box styling is different altogether (static)
             if( has_post_thumbnail() || has_excerpt() || has_term() ) 
                 $expand = 'expand'; 
