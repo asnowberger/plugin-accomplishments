@@ -470,6 +470,7 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
                 
                 // Timeline header (always visible)
                 $html .= "<div class='timeline-info$expand'>";
+                // $html .= "<div class='timeline-info-header'>";
                     if ( $major )
                         $html .= "<div class='timeline-major'><i class='dashicons dashicons-star-empty'></i></div>"; // Dashicon star if a "major" event
                     if( has_post_thumbnail() ) {
@@ -493,11 +494,14 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
                     $html .= "</div>"; // End timeline-data-thumb or timeline-data-no-thumb
                     
                     $html .= "<div class='timeline-clear'></div>";
-                $html .= "</div>"; // End Timeline-info
+
 
                 // Check to be sure there's actually some stuff to put in the timeline-body
                 if ( $expand !== '' ) :
                     $html .= "<div class='timeline-expand-button'><i class='dashicons dashicons-arrow-down'></i></div>";
+                
+                // $html .= "</div>";
+                
                 // Timeline body (only visible on mouseover (uses jQuery))
                 $html .= "<div class='timeline-body'>"; // Initially hidden div 
                     if( has_post_thumbnail() ) {
@@ -522,6 +526,8 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
                 $html .= "</div>"; // end Timeline body
                 
                 endif;
+                
+                $html .= "</div>"; // End Timeline-info
                 
             $html .= "</li>"; // end Timeline item
 
