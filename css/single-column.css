@@ -119,13 +119,13 @@
 
 /* The arrow */
 .timeline-info, .timeline-info-expand {
-    background-color: #f9f9f9;
+    background-color: white;
     padding: 20px;
     border: 1px solid silver;
     border-radius: 10px;
 }
 .timeline-info {
-    background-color: white;
+    background-color: #f9f9f9;
 }
 .hovered {
     border: 1px solid #df002a;

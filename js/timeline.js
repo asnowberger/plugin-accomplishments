@@ -25,10 +25,10 @@ jQuery(document).ready(function($) {
     
     jQuery('.timeline-expand-button').click(
         function() {
-            if( jQuery(this).prev('.timeline-info-expand').hasClass('active') ) {
-                jQuery(this).prev('.timeline-info-expand').removeClass('active');
+            if( jQuery(this).prev('.timeline-info-expand').hasClass('show-all') ) {
+                jQuery(this).prev('.timeline-info-expand').removeClass('show-all');
             } else {
-                jQuery(this).prev('.timeline-info-expand').addClass('active');
+                jQuery(this).prev('.timeline-info-expand').addClass('show-all');
             }
             
             jQuery(this).next('.timeline-body').slideToggle( 'slow' );
