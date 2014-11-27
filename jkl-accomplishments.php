@@ -100,6 +100,18 @@ add_shortcode( 'accomplishments', 'jkl_accomplishments_shortcode' );
 // ##6 : Add a button to the WordPress Post editor panel so that users don't have to remember the shortcode
 add_action( 'admin_init', 'jkl_admin_init' ); // only do this in the admin panel
 
+// ##7 : Create a "Load More Posts" button with AJAX
+// @link : http://code.tutsplus.com/articles/getting-loopy-ajax-powered-loops-with-jquery-and-wordpress--wp-23232
+// 
+// ** NOTE ** : Currently gives an error - it may be redundant to "Load More Posts" anyway, right? Facebook doesn't.
+// Include
+//define( 'WP_USE_THEMES', false );
+//require_once('../../../wp-load.php');
+
+// "Load More Posts Variables"
+//$numPosts = ( isset( $_GET[ 'numPosts' ] ) ) ? $_GET[ 'numPosts' ] : 0;
+//$page = ( isset( $_GET[ 'pageNumber' ] ) ) ? $_GET[ 'pageNumber' ] : 0;
+
 /*
  * ##### 1 #####
  * Register an Accomplishments post type
@@ -400,7 +412,7 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
     $atts = shortcode_atts( // override the $atts variable with these $atts
         array(
             'major'     => false,
-            'style'     => 'single-column',    // Default to a two-column Timeline layout
+            'style'     => 'default',    // Default to a two-column Timeline layout
             'content'   => !empty($content) ? $content : date('Y') . ' Awesomeness!'
         ), $atts // compare against the $atts that are passed in and overwrite whatever isn't specified
     );
@@ -416,6 +428,7 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
     $args = array(
         'post_type'         => 'accomplishments',
         'posts_per_page'    => -1,
+        //'paged'             => $page,
         'year'              => date( 'Y' ),
         //array( // MAYBE we can use this to determine the CSS stylesheet to pass in
         //    'meta_key'      => 'style',
@@ -432,14 +445,22 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
         if( $style == 'two-column' ) {
             wp_register_style( 'jklac_two_column_style', plugin_dir_url( __FILE__ ) . '/css/two-column.css', false, '1.0.0' );
             wp_enqueue_style( 'jklac_two_column_style' );
-        } else {
+        } else if( $style == 'one-column' ) {
             wp_register_style( 'jklac_single_column_style', plugin_dir_url( __FILE__ ) . '/css/single-column.css', false, '1.0.0' );
             wp_enqueue_style( 'jklac_single_column_style' );
+        } else {
+            wp_register_style( 'jklac_fb_style', plugin_dir_url( __FILE__ ) . '/css/fb-style.css', false, '1.0.0' );
+            wp_enqueue_style( 'jklac_fb_style' );
         }
         
         // call the jQuery function to handle the functionality
         wp_register_script( 'timeline', plugin_dir_url( __FILE__ ) . 'js/timeline.js', array( 'jquery' ) );
         wp_enqueue_script( 'timeline' );
+        
+        // call the ajaxLoop function to handle "Load More Posts"
+        // **NOTE** If going to use this function, set 'posts_per_page' in the array => $numPosts **
+        //wp_register_script( 'ajaxLoop', plugin_dir_url( __FILE__ ) . 'js/ajaxLoop.js', array( 'jquery' ) );
+        //wp_enqueue_script( 'ajaxLoop' );
 
         // create the timeline content
         $html .= "<div id='timeline-wrap'>";
@@ -480,7 +501,7 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
                         $html .= "<div class='timeline-data-no-thumb'>";
                     }
                         $html .= "<div class='timeline-data'>";
-                        $html .= "<div class='timeline-date'><i class='dashicons dashicons-clock'></i>&nbsp;&nbsp;" . get_the_date() . "</div>";
+                        $html .= "<div class='timeline-date'><i class='dashicons dashicons-clock'></i>&nbsp;&nbsp;<span class='timeline-md'>" . get_the_date( 'F d,' ) . "</span> <span class='timeline-year'>" . get_the_date('Y') . "</span></div>";
                         if ( get_the_term_list( get_the_ID(), 'type' ) )
                             $html .= "<ul class='timeline-type'>" . get_the_term_list( get_the_ID(), 'type', '<li>', '</li><li>', '</li>' ) . "</ul>";
                         if ( $author )
@@ -537,12 +558,12 @@ function jkl_accomplishments_shortcode( $atts, $content ) {
         wp_reset_postdata();
         
             // Add the 'Load More' link here (Turn this OFF if all posts are loaded already)
-            $html .= "<article class='timeline-load group loading-wrap'>";
-            $html .= "<header class='timeline-info'></header>";
-            $html .= "<figure class='timeline-image'>";
-            $html .= "<div class='loading'><i class='fa fa-spinner'></i> Loading</div>"; // Use a FontAwesome or Dashicon here rather than an image
-            $html .= "</figure>";
-            $html .= "</article>";
+            //$html .= "<article class='timeline-load group loading-wrap'>";
+            //$html .= "<header class='timeline-info'></header>";
+            //$html .= "<figure class='timeline-image'>";
+            //$html .= "<div class='loading'><i class='fa fa-spinner'></i> Loading</div>"; // Use a FontAwesome or Dashicon here rather than an image
+            //$html .= "</figure>";
+            //$html .= "</article>";
         
         $html .= "</div>";
     else :

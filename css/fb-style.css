@@ -1,0 +1,66 @@
+
+#timeline-wrap, 
+#timeline-title,
+#timeline,
+.timeline-item,
+.timeline-info, 
+.timeline-body, 
+.timeline-meta {
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+#timeline-wrap ul {
+    list-style: none;
+}
+#timeline-wrap ul li {
+    list-style-type: none;
+}
+.timeline-md, .dashicons-clock {
+    display: none;
+}
+
+/* The Timeline */
+#timeline-title {
+    margin-bottom: 20px;
+    border-bottom: 1px solid silver;
+}
+.timeline-title h1 {
+    font-size: 2em;
+    margin: 0;
+}
+
+#timeline-wrap {
+    /*background-color: #f0f0f0;
+    padding: 20px;*/
+}
+
+.timeline-item {
+    margin: 0 0 20px 50px;
+}
+
+.timeline-major {
+    position: absolute;
+    font-size: 0.6em;
+}
+.timeline-major {
+    right: 32px;
+    top: 5px;
+}
+.timeline-expand-button {
+    font-size: 0.6em;
+    position: absolute;
+    right: 10px;
+}
+
+.timeline-expand-all-button {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding: 2px 10px;
+    border-left: 1px solid silver;
+    border-right: 1px solid silver;
+    background-color: transparent;
+    color: silver;
+    margin-top: 5px;
+}
